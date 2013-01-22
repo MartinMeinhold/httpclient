@@ -26,6 +26,8 @@
  */
 package org.apache.http.impl.client.cache;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -47,7 +49,7 @@ import org.apache.http.conn.routing.HttpRoute;
  * Class used for asynchronous revalidations to be used when the "stale-
  * while-revalidate" directive is present
  */
-class AsynchronousValidator {
+class AsynchronousValidator implements Closeable {
     private final ExecutorService executor;
     private final Set<String> queued;
     private final CacheKeyGenerator cacheKeyGenerator;
@@ -83,6 +85,11 @@ class AsynchronousValidator {
         this.executor = executor;
         this.queued = new HashSet<String>();
         this.cacheKeyGenerator = new CacheKeyGenerator();
+    }
+
+    @Override
+    public void close() throws IOException {
+        executor.shutdown();
     }
 
     /**

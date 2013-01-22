@@ -26,6 +26,7 @@
  */
 package org.apache.http.impl.client.cache;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -193,6 +194,17 @@ public class TestAsynchronousValidator {
 
             Assert.assertEquals(0, impl.getScheduledIdentifiers().size());
         }
+    }
+
+    @Test
+    public void testExecutorShutdownOnClose() throws IOException {
+        impl = new AsynchronousValidator(mockExecutor);
+
+        mockExecutor.shutdown();
+
+        replayMocks();
+        impl.close();
+        verifyMocks();
     }
 
     public void replayMocks() {
