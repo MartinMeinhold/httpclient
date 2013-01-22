@@ -48,7 +48,6 @@ import org.apache.http.conn.routing.HttpRoute;
  * while-revalidate" directive is present
  */
 class AsynchronousValidator {
-    private final CachingExec cachingExec;
     private final ExecutorService executor;
     private final Set<String> queued;
     private final CacheKeyGenerator cacheKeyGenerator;
@@ -57,20 +56,16 @@ class AsynchronousValidator {
 
     /**
      * Create AsynchronousValidator which will make revalidation requests
-     * using the supplied {@link CachingHttpClient}, and
-     * a {@link ThreadPoolExecutor} generated according to the thread
+     * using a {@link ThreadPoolExecutor} generated according to the thread
      * pool settings provided in the given {@link CacheConfig}.
-     * @param cachingExect used to execute asynchronous requests
      * @param config specifies thread pool settings. See
      * {@link CacheConfig#getAsynchronousWorkersMax()},
      * {@link CacheConfig#getAsynchronousWorkersCore()},
      * {@link CacheConfig#getAsynchronousWorkerIdleLifetimeSecs()},
      * and {@link CacheConfig#getRevalidationQueueSize()}.
      */
-    public AsynchronousValidator(final CachingExec cachingExect,
-            final CacheConfig config) {
-        this(cachingExect,
-                new ThreadPoolExecutor(config.getAsynchronousWorkersCore(),
+    public AsynchronousValidator(final CacheConfig config) {
+        this(new ThreadPoolExecutor(config.getAsynchronousWorkersCore(),
                         config.getAsynchronousWorkersMax(),
                         config.getAsynchronousWorkerIdleLifetimeSecs(),
                         TimeUnit.SECONDS,
@@ -82,11 +77,9 @@ class AsynchronousValidator {
      * Create AsynchronousValidator which will make revalidation requests
      * using the supplied {@link CachingHttpClient} and
      * {@link ExecutorService}.
-     * @param cachingExect used to execute asynchronous requests
      * @param executor used to manage a thread pool of revalidation workers
      */
-    AsynchronousValidator(final CachingExec cachingExec, final ExecutorService executor) {
-        this.cachingExec = cachingExec;
+    AsynchronousValidator(final ExecutorService executor) {
         this.executor = executor;
         this.queued = new HashSet<String>();
         this.cacheKeyGenerator = new CacheKeyGenerator();
@@ -96,6 +89,7 @@ class AsynchronousValidator {
      * Schedules an asynchronous revalidation
      */
     public synchronized void revalidateCacheEntry(
+            final CachingExec cachingExec,
             final HttpRoute route,
             final HttpRequestWrapper request,
             final HttpClientContext context,

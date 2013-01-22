@@ -179,7 +179,7 @@ public class CachingExec implements ClientExecChain {
     private AsynchronousValidator makeAsynchronousValidator(
             final CacheConfig config) {
         if (config.getAsynchronousWorkersMax() > 0) {
-            return new AsynchronousValidator(this, config);
+            return new AsynchronousValidator(config);
         }
         return null;
     }
@@ -312,7 +312,7 @@ public class CachingExec implements ClientExecChain {
                 && validityPolicy.mayReturnStaleWhileRevalidating(entry, now)) {
                 log.trace("Serving stale with asynchronous revalidation");
                 final HttpResponse resp = generateCachedResponse(request, context, entry, now);
-                asynchRevalidator.revalidateCacheEntry(route, request, context, execAware, entry);
+                asynchRevalidator.revalidateCacheEntry(this, route, request, context, execAware, entry);
                 return Proxies.enhanceResponse(resp);
             }
             return revalidateCacheEntry(route, request, context, execAware, entry);
