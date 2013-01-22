@@ -119,6 +119,14 @@ public class CachingExec implements ClientExecChain {
             final ClientExecChain backend,
             final HttpCache cache,
             final CacheConfig config) {
+        this(backend, cache, config, null);
+    }
+
+    public CachingExec(
+            final ClientExecChain backend,
+            final HttpCache cache,
+            final CacheConfig config,
+            final AsynchronousValidator asynchRevalidator) {
         super();
         Args.notNull(backend, "HTTP backend");
         Args.notNull(cache, "HttpCache");
@@ -135,7 +143,7 @@ public class CachingExec implements ClientExecChain {
         this.responseCachingPolicy = new ResponseCachingPolicy(
                 this.cacheConfig.getMaxObjectSize(), this.cacheConfig.isSharedCache(),
                 this.cacheConfig.isNeverCacheHTTP10ResponsesWithQuery());
-        this.asynchRevalidator = makeAsynchronousValidator(config);
+        this.asynchRevalidator = asynchRevalidator != null ? asynchRevalidator : makeAsynchronousValidator(config);
     }
 
     public CachingExec(
