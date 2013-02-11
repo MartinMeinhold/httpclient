@@ -110,8 +110,8 @@ public class CachingHttpClientBuilder extends HttpClientBuilder {
     }
 
     private AsynchronousValidator createAsynchronousRevalidator(final CacheConfig config) {
-        final SchedulingStrategy usedSchedulingStrategy = createSchedulingStrategy(config);
-        final AsynchronousValidator revalidator = new AsynchronousValidator(usedSchedulingStrategy);
+        final SchedulingStrategy configuredSchedulingStrategy = createSchedulingStrategy(config);
+        final AsynchronousValidator revalidator = new AsynchronousValidator(configuredSchedulingStrategy);
         addCloseable(revalidator);
         return revalidator;
     }
