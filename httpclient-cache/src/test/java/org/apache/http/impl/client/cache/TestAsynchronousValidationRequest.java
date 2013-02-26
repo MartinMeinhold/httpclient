@@ -115,7 +115,7 @@ public class TestAsynchronousValidationRequest {
     @Test
     public void testRunReportsJobFailedForStaleResponse() throws Exception {
         final String identifier = "foo";
-        final Header[] warning = new Header[] {new BasicHeader(HeaderConstants.WARNING, "\"Response is stale\"")};
+        final Header[] warning = new Header[] {new BasicHeader(HeaderConstants.WARNING, "110 localhost \"Response is stale\"")};
 
         final AsynchronousValidationRequest impl = new AsynchronousValidationRequest(
                 mockParent, mockClient, route, request, context, mockExecAware, mockCacheEntry,

@@ -143,7 +143,8 @@ class AsynchronousValidationRequest implements Runnable {
         {
             for (final Header warning : warnings)
             {
-                if (warning.getValue().contains("Response is stale"))
+                // warn-code '110' means "Response is stale"
+                if (warning.getValue().startsWith("110"))
                 {
                     return false;
                 }
